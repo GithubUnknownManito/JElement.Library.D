@@ -3,7 +3,6 @@ const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const banner = `
   This source code is licensed under the {{}} license found in the
@@ -49,10 +48,6 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "css/index.css",
-    }),
-    new HtmlWebpackPlugin({
-      //指定模板
-      template: "./index.html",
     }),
     new webpack.BannerPlugin(banner),
   ],
