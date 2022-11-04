@@ -3,6 +3,8 @@
  * 同内部工具使用
  */
 import { isEmpty, hasOwnProperty } from "./JElementUtils";
+import JElementObject from "./JElementObject";
+
 export function forEach(array: any, callback: any) {
   if (isEmpty(array)) {
     return array;
@@ -16,6 +18,10 @@ export function forEach(array: any, callback: any) {
     callback.call(this, array[i], i);
   }
   return array;
+}
+
+export function createElement(labelName: string) {
+  return new JElementObject(labelName, null).at(0);
 }
 
 export default {};

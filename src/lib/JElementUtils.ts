@@ -42,12 +42,12 @@ export function styleFormat(value: any, structure: any) {
     }
   } else {
     let style = "";
-    Object.keys(Object.assign({}, value)).forEach((item) => {
+    Object.keys(Object.assign(structure, value)).forEach((item) => {
       let key = item;
       item.match(/[A-Z]/)?.forEach((U) => {
         key = key.replace(U, `-${U}`.toLowerCase());
       });
-      style += `${item}:${key[item]}`;
+      style += `${item}:${value[item]}`;
     });
     return style;
   }
@@ -65,9 +65,14 @@ export function labelFormat(value: string) {
   const data = value.match(labelContentRegular);
   if (data && data.length) {
     const options = new ElementOptions();
-    options.tab = data[1].substring(0, data[1].indexOf(" "));
+    if (data[1].indexOf(" ") > 0) {
+      options.tab = data[1].substring(0, data[1].indexOf(" "));
+    } else {
+      options.tab = data[1];
+    }
+
     const attrList = data[1].match(/(([a-zA-Z0-9_-]+)=(['"]([^('|")]+)['"]))/g);
-    if (attrList.length >= 1) {
+    if (attrList && attrList.length >= 1) {
       for (let i = 0; i < attrList.length; i++) {
         const attr = attrList[i].split("=");
         if (attr && attr.length == 2) {
@@ -163,7 +168,7 @@ export function downlevelIteration(...args: any[]): any[] {
     if (Array.isArray(el)) {
       push.apply(array, el);
     } else {
-      if (hasOwn.call(el, "length")) {
+      if (hasOwnProperty(el, "length")) {
         for (let j = 0; j < el.length; j++) {
           array.push(el[j]);
         }

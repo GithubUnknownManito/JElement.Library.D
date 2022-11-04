@@ -12,6 +12,7 @@ import {
   hasOwn,
   downlevelIteration,
   push,
+  hasOwnProperty,
 } from "./JElementUtils";
 import { forEach } from "./JElementStatic";
 
@@ -20,7 +21,7 @@ import ElementOptions from "./JElementOptions";
 export default class JElementObject {
   length: any = 0;
   document: Document | HTMLElement | Array<HTMLElement> = window.document;
-  options: any;
+  private options: any;
   parent: any;
 
   constructor(
@@ -30,50 +31,74 @@ export default class JElementObject {
   ) {
     this.parent = parent;
     this.options = options;
-
-    if (typeof selector === "string") {
-      this.document = window.document;
-      this.init(selector, options);
-    } else if (Array.isArray(selector)) {
-      forEach.call(this, selector, function (_el: any) {
-        this[this.length++] = _el;
-      });
-      this.document = selector;
-    } else if (selector instanceof JElementObject) {
-      return selector;
-    } else if (selector instanceof HTMLElement) {
-      this[0] = selector;
-      this.length = 1;
-      this.document = selector;
-    }
+    this.init(selector, options);
   }
 
-  init(selector: string, options?: ElementOptions | any) {
-    if (isEmpty(this.document)) {
-      this.document = window.document;
-    }
+  addElement(target: HTMLElement | Array<HTMLElement> | JElementObject | any) {
     if (isEmpty(this.length)) {
       this.length = 0;
     }
 
-    options = Object.assign(options || {}, labelFormat(selector));
-    if (typeof selector === "string" && selector) {
-      if (labelContentRegular.test(selector)) {
-        this.create(options["tab"], options);
-      } else {
-        if (options["selector"]) {
-          this.document = forEach.call(
-            this,
-            (this.document as Document).querySelectorAll(options["selector"]),
-            function (el: any, i: string | number) {
-              this[i] = el;
-              this.length++;
-            }
-          );
-        }
-      }
+    if (hasOwnProperty(target, "length")) {
+      const self = this;
+      forEach(target, function (el: any) {
+        self[self.length++] = el;
+      });
+    } else {
+      this[this.length++] = target;
     }
-    this.options = options;
+    return this.render();
+  }
+
+  private init(
+    selector:
+      | string
+      | HTMLElement
+      | Array<HTMLElement>
+      | JElementObject
+      | NodeListOf<any>,
+    options?: ElementOptions | any
+  ) {
+    if (isEmpty(this.document)) {
+      this.document = window.document;
+    }
+    if (!selector) {
+      return;
+    }
+    if (typeof selector === "string") {
+      if (labelContentRegular.test(selector)) {
+        this.create(selector);
+      } else {
+        this.init((this.document as Document).querySelectorAll(selector));
+      }
+      this.options = Object.assign(options || {}, labelFormat(selector));
+    } else if (
+      hasOwnProperty(selector, "length") ||
+      selector instanceof HTMLElement
+    ) {
+      this.addElement(selector);
+    } else if (selector instanceof JElementObject) {
+      return selector;
+    }
+  }
+
+  find(selector: string): JElementObject {
+    const document: any[] = [];
+    const data: any[] = [];
+
+    this.forEach(function (el: HTMLElement) {
+      push.apply(data, el.querySelectorAll(selector));
+      document.push(el);
+    });
+
+    return new JElementObject(
+      data,
+      {
+        ...this.options,
+        selector: `${this.options.selector} ${selector}`,
+      },
+      document
+    );
   }
 
   create(labelName: string, options?: ElementOptions | any) {
@@ -82,15 +107,45 @@ export default class JElementObject {
     }
     if (isEmpty(options)) {
       options = labelFormat(labelName);
+      if (options["tab"]) {
+        labelName = options["tab"];
+      }
     }
-
-    this[this.length++] = document.createElement(labelName);
+    this.addElement(document.createElement(labelName));
     options["style"] && this.css(options["style"]);
     options["className"] && this.setClass(options["className"]);
     options["attr"] && this.attr(options["attr"]);
     options["id"] && this.attr("id", options["id"]);
 
     return this.render();
+  }
+
+  render(): JElementObject {
+    return this;
+  }
+
+  eq(index?: number) {
+    return new JElementObject(this.at(index));
+  }
+
+  at(index?: number): HTMLElement | any {
+    if (this.length >= (index || 0)) {
+      return this[index || 0];
+    }
+    return undefined;
+  }
+
+  lastAt() {
+    if (this.length) {
+      return this[this.length - 1];
+    }
+    return undefined;
+  }
+
+  forEach(callback: any) {
+    for (let i = 0; i < this.length; i++) {
+      callback.call(this, this[i] as HTMLElement, i, this);
+    }
   }
 
   css(key: any, value?: string): string | JElementObject {
@@ -265,23 +320,6 @@ export default class JElementObject {
     return this.render();
   }
 
-  eq(index?: number) {
-    return new JElementObject(this.at(index));
-  }
-
-  at(index?: number): HTMLElement | any {
-    if (this.length >= (index || 0)) {
-      return this[index || 0];
-    }
-    return undefined;
-  }
-
-  forEach(callback: any) {
-    for (let i = 0; i < this.length; i++) {
-      callback.call(this, this[i] as HTMLElement, i, this);
-    }
-  }
-
   show(): JElementObject {
     const display = this.attr("effect-display") as string;
     this.css({
@@ -299,41 +337,6 @@ export default class JElementObject {
       display: "none",
     });
     return this.render();
-  }
-
-  // eslint-disable-next-line no-unused-vars
-  render(): JElementObject {
-    return this;
-  }
-
-  find(selector: string): JElementObject {
-    const tmp: any[] = [];
-    let document: any[] = [];
-    if (
-      this.document instanceof Document ||
-      this.document instanceof HTMLElement
-    ) {
-      document = [this.document];
-      forEach(this.document.querySelectorAll(selector), function (_el: any) {
-        tmp.push(_el);
-      });
-    } else {
-      forEach(this.document, function (_document: any) {
-        document.push(_document);
-        forEach(_document.querySelectorAll(selector), function (_el: any) {
-          tmp.push(_el);
-        });
-      });
-    }
-
-    return new JElementObject(
-      tmp,
-      {
-        ...this.options,
-        selector: `${this.options.selector} ${selector}`,
-      },
-      document
-    );
   }
 
   val(value?: string) {
@@ -390,6 +393,53 @@ export default class JElementObject {
       });
       el.addEventListener(event, handle);
     });
+    return this.render();
+  }
+
+  height() {
+    return this.at(0).clientHeight;
+  }
+
+  scrollHeight() {
+    return this.at(0).scrollHeight;
+  }
+
+  offsetHeight() {
+    return this.at(0).offsetHeight;
+  }
+
+  width() {
+    return this.at(0).clientWidth;
+  }
+
+  scrollWidth() {
+    return this.at(0).scrollWidth;
+  }
+  offsetWidth() {
+    return this.at(0).offsetWidth;
+  }
+
+  append(target: string | HTMLElement | Array<HTMLElement> | JElementObject) {
+    const element = this.lastAt();
+    if (element) {
+      new JElementObject(target).forEach(function (el: HTMLElement) {
+        if (element.appendChild) {
+          element.appendChild(el);
+        }
+      });
+    }
+    return this.render();
+  }
+
+  appendTo(target: string | HTMLElement | Array<HTMLElement> | JElementObject) {
+    const element = new JElementObject(target).lastAt();
+    if (element) {
+      if (element.appendChild) {
+        this.forEach(function (el: HTMLElement) {
+          element.appendChild(el);
+        });
+      }
+    }
     return this.render();
   }
 }
