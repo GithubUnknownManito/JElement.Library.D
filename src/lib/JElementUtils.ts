@@ -64,7 +64,7 @@ export function cssCompose(data: any): string {
 export function labelFormat(value: string) {
   const data = value.match(labelContentRegular);
   if (data && data.length) {
-    const options = new ElementOptions();
+    const options: ElementOptions = {};
     if (data[1].indexOf(" ") > 0) {
       options.tab = data[1].substring(0, data[1].indexOf(" "));
     } else {
@@ -107,11 +107,7 @@ export function isFunction(obj: any) {
   // Support: QtWeb <=3.8.5, WebKit <=534.34, wkhtmltopdf tool <=0.12.5
   // Plus for old WebKit, typeof returns "function" for HTML collections
   // (e.g., `typeof document.getElementsByTagName("div") === "function"`). (gh-4756)
-  return (
-    typeof obj === "function" &&
-    typeof obj.nodeType !== "number" &&
-    typeof obj.item !== "function"
-  );
+  return typeof obj === "function" && typeof obj.nodeType !== "number" && typeof obj.item !== "function";
 }
 
 export function isPlainObject(obj: any) {
@@ -130,9 +126,7 @@ export function isPlainObject(obj: any) {
 
   // Objects with prototype are plain iff they were constructed by a global Object function
   const Ctor = hasOwn.call(proto, "constructor") && proto.constructor;
-  return (
-    typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString
-  );
+  return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
 }
 
 export function isEmpty(value: any): boolean {
@@ -141,11 +135,7 @@ export function isEmpty(value: any): boolean {
   }
   if (typeof value === "number" || value instanceof Number) {
     return isNaN(Number(value));
-  } else if (
-    typeof value === "string" ||
-    value instanceof String ||
-    Array.isArray(value)
-  ) {
+  } else if (typeof value === "string" || value instanceof String || Array.isArray(value)) {
     return !value.length;
   } else {
     return isEmpty(Object.keys(value));
