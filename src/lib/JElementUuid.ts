@@ -2,9 +2,8 @@
  * UUID
  */
 
-export function uuid(len = 9) {
-  const chars =
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+export function uuid(len = 9): string {
+  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
   const uuid = [];
   let i: number;
   const radix = chars.length;

@@ -31,7 +31,7 @@ export function attrFormat(val: string | any): string | any {
   return val;
 }
 
-export function styleFormat(value: any, structure: any) {
+export function styleFormat(value: any, structure: any): string | any {
   if (typeof value == "string") {
     const style = attrFormat(value);
     if (typeof style == "string") {
@@ -61,7 +61,7 @@ export function cssCompose(data: any): string {
   return style;
 }
 
-export function labelFormat(value: string) {
+export function labelFormat(value: string): ElementOptions {
   const data = value.match(labelContentRegular);
   if (data && data.length) {
     const options: ElementOptions = {};
@@ -99,7 +99,7 @@ export function labelFormat(value: string) {
   }
 }
 
-export function isFunction(obj: any) {
+export function isFunction(obj: any): boolean {
   // Support: Chrome <=57, Firefox <=52
   // In some browsers, typeof returns "function" for HTML <object> elements
   // (i.e., `typeof document.createElement( "object" ) === "function"`).
@@ -110,7 +110,7 @@ export function isFunction(obj: any) {
   return typeof obj === "function" && typeof obj.nodeType !== "number" && typeof obj.item !== "function";
 }
 
-export function isPlainObject(obj: any) {
+export function isPlainObject(obj: any): boolean {
   // Detect obvious negatives
   // Use toString instead of jQuery.type to catch host objects
   if (!obj || toString.call(obj) !== "[object Object]") {

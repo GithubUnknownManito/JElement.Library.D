@@ -4,6 +4,7 @@
  */
 import { isEmpty, hasOwnProperty } from "./JElementUtils";
 import JElementObject from "./JElementObject";
+import ElementOptions from "./JElementOptions";
 
 export function forEach(array: any, callback: any) {
   if (isEmpty(array)) {
@@ -20,8 +21,12 @@ export function forEach(array: any, callback: any) {
   return array;
 }
 
-export function createElement(labelName: string) {
-  return new JElementObject(labelName, null).at(0);
+export function createElement(labelName: string, options?: ElementOptions): HTMLElement {
+  return createJElement(labelName, options).at(0);
+}
+
+export function createJElement(labelName: string, options?: ElementOptions): JElementObject {
+  return new JElementObject(labelName, options);
 }
 
 export default {};

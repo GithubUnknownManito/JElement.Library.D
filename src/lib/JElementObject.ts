@@ -2,18 +2,7 @@
  * 标签操作主体，继承简写基本标签能力
  */
 import { getCache, setCache } from "./JElementCache";
-import {
-  labelContentRegular,
-  attrFormat,
-  styleFormat,
-  cssCompose,
-  labelFormat,
-  isEmpty,
-  hasOwn,
-  downlevelIteration,
-  push,
-  hasOwnProperty,
-} from "./JElementUtils";
+import { labelContentRegular, attrFormat, styleFormat, cssCompose, labelFormat, isEmpty, hasOwn, downlevelIteration, push, hasOwnProperty } from "./JElementUtils";
 import { forEach } from "./JElementStatic";
 
 import ElementOptions from "./JElementOptions";
@@ -24,11 +13,7 @@ export default class JElementObject {
   private options: any;
   parent: any;
 
-  constructor(
-    selector: string | HTMLElement | Array<HTMLElement> | JElementObject,
-    options?: ElementOptions | any,
-    parent?: any
-  ) {
+  constructor(selector: string | HTMLElement | Array<HTMLElement> | JElementObject, options?: ElementOptions | any, parent?: any) {
     this.parent = parent;
     this.options = options;
     this.init(selector, options);
@@ -50,15 +35,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  private init(
-    selector:
-      | string
-      | HTMLElement
-      | Array<HTMLElement>
-      | JElementObject
-      | NodeListOf<any>,
-    options?: ElementOptions | any
-  ) {
+  private init(selector: string | HTMLElement | Array<HTMLElement> | JElementObject | NodeListOf<any>, options?: ElementOptions | any) {
     if (isEmpty(this.document)) {
       this.document = window.document;
     }
@@ -72,10 +49,7 @@ export default class JElementObject {
         this.init((this.document as Document).querySelectorAll(selector));
       }
       this.options = Object.assign(options || {}, labelFormat(selector));
-    } else if (
-      hasOwnProperty(selector, "length") ||
-      selector instanceof HTMLElement
-    ) {
+    } else if (hasOwnProperty(selector, "length") || selector instanceof HTMLElement) {
       this.addElement(selector);
     } else if (selector instanceof JElementObject) {
       return selector;
@@ -124,28 +98,29 @@ export default class JElementObject {
     return this;
   }
 
-  eq(index?: number) {
+  eq(index?: number): JElementObject {
     return new JElementObject(this.at(index));
   }
 
-  at(index?: number): HTMLElement | any {
+  at(index?: number): HTMLElement {
     if (this.length >= (index || 0)) {
       return this[index || 0];
     }
     return undefined;
   }
 
-  lastAt() {
+  lastAt(): HTMLElement {
     if (this.length) {
       return this[this.length - 1];
     }
     return undefined;
   }
 
-  forEach(callback: any) {
+  forEach(callback: any): JElementObject {
     for (let i = 0; i < this.length; i++) {
       callback.call(this, this[i] as HTMLElement, i, this);
     }
+    return this.render();
   }
 
   css(key: any, value?: string): string | JElementObject {
@@ -256,7 +231,7 @@ export default class JElementObject {
     return this.getClass(this.at());
   }
 
-  setClass(className: string | Array<string>, el?: HTMLElement) {
+  setClass(className: string | Array<string>, el?: HTMLElement): JElementObject {
     if (isEmpty(className)) {
       return this.render();
     }
@@ -297,10 +272,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  removeClass(
-    value: string | Array<string>,
-    displace?: string
-  ): JElementObject {
+  removeClass(value: string | Array<string>, displace?: string): JElementObject {
     if (isEmpty(value)) {
       return this.render();
     }
@@ -339,7 +311,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  val(value?: string) {
+  val(value?: string): JElementObject | string {
     const el = this.at();
     if (el.tagName == "input".toUpperCase()) {
       if (!value) {
@@ -365,7 +337,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  on(event: string, callback?: any) {
+  on(event: string, callback?: any): JElementObject {
     const that = this;
     this.forEach(function (el: any) {
       const handle = setCache(el, event, function (...arg: any[]) {
@@ -377,7 +349,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  off(event: string, keys?: string) {
+  off(event: string, keys?: string): JElementObject {
     this.forEach(function (el: any) {
       const handle = getCache(el, keys || event);
       el.removeEventListener(event, handle);
@@ -385,7 +357,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  one(event: string, callback?: any) {
+  one(event: string, callback?: any): JElementObject {
     this.forEach(function (el: any, index: number, that: any) {
       const handle = setCache(el, `one-${event}`, function (...arg: any[]) {
         callback?.apply(that, downlevelIteration(arg, el, that));
@@ -396,30 +368,30 @@ export default class JElementObject {
     return this.render();
   }
 
-  height() {
+  height(): number {
     return this.at(0).clientHeight;
   }
 
-  scrollHeight() {
+  scrollHeight(): number {
     return this.at(0).scrollHeight;
   }
 
-  offsetHeight() {
+  offsetHeight(): number {
     return this.at(0).offsetHeight;
   }
 
-  width() {
+  width(): number {
     return this.at(0).clientWidth;
   }
 
-  scrollWidth() {
+  scrollWidth(): number {
     return this.at(0).scrollWidth;
   }
-  offsetWidth() {
+  offsetWidth(): number {
     return this.at(0).offsetWidth;
   }
 
-  append(target: string | HTMLElement | Array<HTMLElement> | JElementObject) {
+  append(target: string | HTMLElement | Array<HTMLElement> | JElementObject): JElementObject {
     const element = this.lastAt();
     if (element) {
       new JElementObject(target).forEach(function (el: HTMLElement) {
@@ -431,7 +403,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  appendTo(target: string | HTMLElement | Array<HTMLElement> | JElementObject) {
+  appendTo(target: string | HTMLElement | Array<HTMLElement> | JElementObject): JElementObject {
     const element = new JElementObject(target).lastAt();
     if (element) {
       if (element.appendChild) {
