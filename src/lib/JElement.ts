@@ -1,9 +1,9 @@
-import JElementObject from "./JElementObject";
-import { ElementOptions } from "./JElementTyper";
+import { JElementObject } from "./JElementObject";
+import { ElementSelector, ElementOptions } from "./JElementTyper";
 import ElementExtend from "./JElementExtend";
 import * as JElementStatic from "./JElementStatic";
 
-export default function JElement(selector: string | HTMLElement, options?: ElementOptions | any): JElementObject {
+export default function JElement(selector: ElementSelector, options?: ElementOptions | any): JElementObject {
   return new JElement.fn.ref(selector, options);
 }
 JElement.fn = JElement.prototype = Object.create(JElementObject.prototype);

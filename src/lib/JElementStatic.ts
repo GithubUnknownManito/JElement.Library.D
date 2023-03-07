@@ -4,7 +4,7 @@
  */
 import { isEmpty, hasOwnProperty } from "./JElementUtils";
 import JElementObject from "./JElementObject";
-import ElementOptions from "./JElementOptions";
+import { ElementOptions } from "./JElementTyper";
 
 export function forEach(array: any, callback: any) {
   if (isEmpty(array)) {
@@ -29,4 +29,4 @@ export function createJElement(labelName: string, options?: ElementOptions): JEl
   return new JElementObject(labelName, options);
 }
 
-export default {};
+export default { createElement, createJElement };
