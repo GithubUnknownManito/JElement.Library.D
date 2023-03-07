@@ -1,5 +1,5 @@
 import JElementObject from "./JElementObject";
-import ElementOptions from "./JElementOptions";
+import { ElementOptions } from "./JElementTyper";
 import ElementExtend from "./JElementExtend";
 import * as JElementStatic from "./JElementStatic";
 

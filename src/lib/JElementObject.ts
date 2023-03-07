@@ -5,15 +5,15 @@ import { getCache, setCache } from "./JElementCache";
 import { labelContentRegular, attrFormat, styleFormat, cssCompose, labelFormat, isEmpty, hasOwn, downlevelIteration, push, hasOwnProperty } from "./JElementUtils";
 import { forEach } from "./JElementStatic";
 
-import ElementOptions from "./JElementOptions";
-
-export default class JElementObject {
+import { ElementSelector, ElementOptions } from "./JElementTyper";
+export default JElementObject;
+export class JElementObject {
   length: any = 0;
   document: Document | HTMLElement | Array<HTMLElement> = window.document;
   private options: any;
   parent: any;
 
-  constructor(selector: string | HTMLElement | Array<HTMLElement> | JElementObject, options?: ElementOptions | any, parent?: any) {
+  constructor(selector: ElementSelector, options?: ElementOptions | any, parent?: any) {
     this.parent = parent;
     this.options = options;
     this.init(selector, options);
@@ -35,7 +35,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  private init(selector: string | HTMLElement | Array<HTMLElement> | JElementObject | NodeListOf<any>, options?: ElementOptions | any) {
+  private init(selector: ElementSelector, options?: ElementOptions | any) {
     if (isEmpty(this.document)) {
       this.document = window.document;
     }
@@ -178,7 +178,7 @@ export default class JElementObject {
     return this.render();
   }
 
-  attr(key: any, value?: string): string | JElementObject {
+  attr(key: any, value?: string): JElementObject | string {
     const self = this;
 
     if (isEmpty(key)) {

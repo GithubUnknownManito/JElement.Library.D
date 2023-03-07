@@ -3,7 +3,7 @@
  * ts可以被引用
  * js下将不会被主动暴露（dev
  */
-import ElementOptions from "./JElementOptions";
+import { ElementOptions } from "./JElementTyper";
 
 export const labelContentRegular = /<([^/]+)>/;
 export const styleRegular = /([^:]+:[^;]+;{0,1})+/;
