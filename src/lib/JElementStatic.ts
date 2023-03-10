@@ -3,7 +3,7 @@
  * 同内部工具使用
  */
 import { isEmpty, hasOwnProperty } from "./JElementUtils";
-import JElementObject from "./JElementObject";
+import { JElementObject } from "./JElementObject";
 import { ElementOptions } from "./JElementTyper";
 
 export function forEach(array: any, callback: any) {

@@ -17,12 +17,15 @@ export function attrFormat(val: string | any): string | any {
   if (typeof val == "string") {
     if (styleRegular.test(val)) {
       const json = {};
-      val.split(";").forEach((item) => {
-        const tmp = item.split(":");
-        if (tmp && tmp.length) {
-          json[tmp[0]] = tmp[1];
-        }
-      });
+      val
+        .split(";")
+        .filter((item) => item)
+        .forEach((item) => {
+          const tmp = item.split(":");
+          if (tmp && tmp.length) {
+            json[tmp[0]] = tmp[1];
+          }
+        });
       return json;
     } else {
       return val;
@@ -56,7 +59,18 @@ export function styleFormat(value: any, structure: any): string | any {
 export function cssCompose(data: any): string {
   let style = "";
   Object.keys(data).forEach((key) => {
-    style += `${key}:${data[key]};`;
+    let keyText = key;
+    let result: RegExpExecArray;
+    if (style) {
+      style += "; ";
+    }
+    do {
+      result = /[A-Z]/g.exec(keyText);
+      if (result) {
+        keyText = `${keyText.substring(0, result.index)}-${result[0].toLowerCase()}${keyText.substring(result.index + 1)}`;
+      }
+    } while (result);
+    style += `${keyText}: ${data[key]}`;
   });
   return style;
 }

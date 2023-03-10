@@ -1,4 +1,5 @@
 const path = require("path");
+const package = require("./package.json");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -16,16 +17,13 @@ module.exports = {
   output: {
     filename: "index.js",
     path: path.resolve(__dirname, "build"),
-    library: "MyLibrary",
+    library: package.name,
     libraryTarget: "umd",
     clean: true,
   },
   optimization: {
     minimize: true,
-    minimizer: [
-      new TerserPlugin({ extractComments: false }),
-      new CssMinimizerPlugin(),
-    ],
+    minimizer: [new TerserPlugin({ extractComments: false }), new CssMinimizerPlugin()],
   },
   module: {
     rules: [
@@ -38,10 +36,7 @@ module.exports = {
       },
       {
         test: /\.(sa|sc|c)ss$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          { loader: "css-loader", options: { sourceMap: true } },
-        ],
+        use: [MiniCssExtractPlugin.loader, { loader: "css-loader", options: { sourceMap: true } }],
       },
     ],
   },

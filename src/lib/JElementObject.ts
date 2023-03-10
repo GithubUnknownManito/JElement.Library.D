@@ -6,7 +6,6 @@ import { labelContentRegular, attrFormat, styleFormat, cssCompose, labelFormat, 
 import { forEach } from "./JElementStatic";
 
 import { ElementSelector, ElementOptions } from "./JElementTyper";
-export default JElementObject;
 export class JElementObject {
   length: any = 0;
   document: Document | HTMLElement | Array<HTMLElement> = window.document;
@@ -337,7 +336,8 @@ export class JElementObject {
     return this.render();
   }
 
-  on(event: string, callback?: any): JElementObject {
+  // eslint-disable-next-line no-unused-vars
+  on<E extends Event>(event: string, callback?: (event: E) => void): JElementObject {
     const that = this;
     this.forEach(function (el: any) {
       const handle = setCache(el, event, function (...arg: any[]) {
@@ -357,7 +357,8 @@ export class JElementObject {
     return this.render();
   }
 
-  one(event: string, callback?: any): JElementObject {
+  // eslint-disable-next-line no-unused-vars
+  one<E extends Event>(event: string, callback?: (event: E) => void): JElementObject {
     this.forEach(function (el: any, index: number, that: any) {
       const handle = setCache(el, `one-${event}`, function (...arg: any[]) {
         callback?.apply(that, downlevelIteration(arg, el, that));
@@ -415,3 +416,4 @@ export class JElementObject {
     return this.render();
   }
 }
+export default JElementObject;
