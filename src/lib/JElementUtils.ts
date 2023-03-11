@@ -85,7 +85,7 @@ export function labelFormat(value: string): ElementOptions {
       options.tab = data[1];
     }
 
-    const attrList = data[1].match(/(([a-zA-Z0-9_-]+)=(['"]([^('|")]+)['"]))/g);
+    const attrList = data[1].match(/(([a-zA-Z0-9_-]+)=(['"]([^'"]+)['"]))/g);
     if (attrList && attrList.length >= 1) {
       for (let i = 0; i < attrList.length; i++) {
         const attr = attrList[i].split("=");
